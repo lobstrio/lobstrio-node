@@ -1,0 +1,38 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: Lint (tsc)
+        run: npm run lint
+      - name: Unit tests (the live smoke test is skipped without LOBSTR_API_KEY)
+        run: npm test
+      - run: npm run build
+      - name: The packed package installs, loads by import and require, and runs its CLI
+        run: |
+          npm pack
+          tarball="$PWD/$(ls lobstrio-*.tgz)"
+          mkdir -p "$RUNNER_TEMP/smoke" && cd "$RUNNER_TEMP/smoke"
+          npm init -y > /dev/null
+          npm install "$tarball"
+          node -e "const { Lobstr } = require('lobstrio'); if (typeof new Lobstr('k').run !== 'function') process.exit(1)"
+          node --input-type=module -e "import { Lobstr } from 'lobstrio'; if (typeof new Lobstr('k').googleMaps.places.search !== 'function') process.exit(1)"
+          npx lobstr --version
