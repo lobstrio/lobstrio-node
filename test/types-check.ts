@@ -24,3 +24,44 @@ async function f() {
   return [name, res];
 }
 f;
+
+// The README's examples.
+async function readme() {
+  const run = await client.run('google_maps/places/search', { query: 'bakeries in Lyon' }, { limit: 5 });
+  void [run.results, run.cost.credits, run.balance?.credits, run.next];
+  let page: Awaited<ReturnType<typeof client.googleMaps.reviews.list>> | null = await client.run('google_maps/reviews/list', {
+    place: 'ChIJc_459AHr9EcRd0ALc7vrjcI',
+  });
+  while (page) {
+    for (const review of page.results) console.log(review.rating);
+    page = await page.nextPage();
+  }
+  for await (const review of client.iterate('google_maps/reviews/list', { place: 'x' }, { maxRecords: 100 })) {
+    console.log(review.text);
+  }
+  const typed = await client.googleMaps.places.search({ query: 'bakery', near: { lat: 45.76, lng: 4.84 } });
+  const phone: string | null = typed.results[0].phone;
+  for await (const tweet of client.x.tweets.search.iterate({ query: 'nasa' }, { maxPages: 2 })) console.log(tweet.text);
+  await client.runMany(
+    [
+      ['google_maps/places/search', { query: 'bakeries in Lyon' }],
+      ['google_maps/places/search', { query: 'bakeries in Lille' }, { limit: 5 }],
+    ],
+    { concurrency: 4 },
+  );
+  await client.catalog.list();
+  await client.catalog.get('google_maps/places/search');
+  await client.catalog.status('google_maps/places/search');
+  await client.balance();
+  await client.accounts.connect({ site: 'x', cookies: { auth_token: '...', ct0: '...' }, country: 'FR' });
+  await client.accounts.list({ site: 'x' });
+  await client.accounts.get('acc_...');
+  await client.accounts.delete('acc_...');
+  await client.runs.list({ limit: 20 });
+  for await (const call of client.runs.list({ status: 'failed' })) console.log(call.id);
+  await client.runs.get('run_...');
+  await client.runs.response('run_...');
+  await client.feedback('A field is missing', { kind: 'missing_data', operation: 'google_maps/places/get' });
+  return phone;
+}
+readme;
