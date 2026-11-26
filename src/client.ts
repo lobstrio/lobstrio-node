@@ -103,12 +103,12 @@ export class Catalog {
   }
 
   /** One operation's public contract: its options, record, price, deadline, errors, examples. */
-  get(operation: OperationName): Promise<OperationContract> {
+  async get(operation: OperationName): Promise<OperationContract> {
     return this.client._request({ method: 'GET', path: `/v2/catalog/${operationPath(operation)}`, auth: false });
   }
 
   /** How the operation's calls went, the last 90 days, a UTC day at a time. */
-  status(operation: OperationName): Promise<OperationStatus> {
+  async status(operation: OperationName): Promise<OperationStatus> {
     return this.client._request({
       method: 'GET',
       path: `/v2/catalog/${operationPath(operation)}/status`,
@@ -263,7 +263,7 @@ export class Lobstr {
    * run.results; run.cost.credits; await run.nextPage();
    * ```
    */
-  run<K extends OperationName>(
+  async run<K extends OperationName>(
     operation: K,
     options?: OptionsFor<K>,
     params: RunParams = {},
