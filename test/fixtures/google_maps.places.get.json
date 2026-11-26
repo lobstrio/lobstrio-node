@@ -1,0 +1,1254 @@
+{
+ "operation": "places/get",
+ "version": "2.0.1",
+ "status": "pilot",
+ "title": "Get a place",
+ "summary": "One place's page on Google Maps, by its id, its link or its name, with everything places/search gives and its photos.",
+ "use_when": "You want one place, given as `place`: an id (a search's `id`, a cid, a feature id), the link of its Google Maps page, or a name with its city (\"Le Vieux Lyon, Lyon\"). It costs 1 credit where a search costs 20: the cheap way from a name to a place id, before google_maps/reviews/list. A name that matches several places answers `ambiguous_query` with them.",
+ "categories": [
+  "Lead generation"
+ ],
+ "icon": "store",
+ "source": "google_maps",
+ "input": {
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+   "place"
+  ],
+  "properties": {
+   "place": {
+    "type": "string",
+    "minLength": 2,
+    "maxLength": 300,
+    "description": "The place, however you know it: its Google place id (ChIJ..., a search's `id`), its cid (`ids.cid`), its feature id (`ids.feature_id`, 0x...:0x...), the link of its page on Google Maps as the browser shows it (a short maps.app.goo.gl link is not taken: open it and copy the page's link), or its name with its city as you would search it in Google Maps (\"Le Vieux Lyon, Lyon\"), for the place Google opens. A name Google answers with several places answers `ambiguous_query` with the first ones (free): send the one you mean.",
+    "examples": [
+     "ChIJ39Y-tdg1fYcRQcZcBb499do",
+     "15777584755905447489",
+     "Le Vieux Lyon, Lyon"
+    ]
+   },
+   "language": {
+    "type": "string",
+    "pattern": "^[a-z]{2}$",
+    "default": "en",
+    "description": "The language of names, categories, hours and labels, as an ISO 639-1 code."
+   },
+   "country": {
+    "type": "string",
+    "pattern": "^[a-z]{2}$",
+    "default": "us",
+    "description": "The country Google answers for, as an ISO 3166-1 alpha-2 code in lower case."
+   }
+  }
+ },
+ "pagination": {
+  "style": "none",
+  "page_size": 1
+ },
+ "record": {
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+   "object",
+   "id",
+   "name",
+   "categories",
+   "primary_category_id",
+   "result_type",
+   "address",
+   "location",
+   "phone",
+   "website_url",
+   "rating",
+   "review_topics",
+   "description",
+   "owner_description",
+   "booking_url",
+   "hours",
+   "more_hours",
+   "timezone",
+   "attributes",
+   "highlights",
+   "actions",
+   "owner",
+   "ids",
+   "photo_url",
+   "url",
+   "source_url",
+   "observed_at",
+   "photos",
+   "related",
+   "inside",
+   "popular_times",
+   "admission",
+   "hotel",
+   "things_to_do"
+  ],
+  "properties": {
+   "object": {
+    "const": "place",
+    "description": "The kind of record: a place, whichever site it comes from."
+   },
+   "id": {
+    "type": "string",
+    "description": "Google's place id (ChIJ...), stable across languages; repeated in ids.place_id."
+   },
+   "name": {
+    "type": "string"
+   },
+   "categories": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    },
+    "description": "As Google Maps names them, the main one first."
+   },
+   "primary_category_id": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "pattern": "^[a-z0-9_]+$",
+    "description": "The main category's id as Google files it, the same in every language: lebanese_restaurant, sewing_machine_store, cosmetic_dentist. Google gives it on a place's page for the main category alone; categories has every category's name, in the search's language."
+   },
+   "result_type": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "pattern": "^[a-z0-9_]+$",
+    "description": "Google's search-result type for the place, the same in every language: a family for most places (shopping, industrial, personal_care), finer for some (french_restaurant, bakery, park). Not its category: categories has those by name, and places/get gives primary_category_id."
+   },
+   "address": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "full",
+     "street",
+     "neighborhood",
+     "city",
+     "postal_code",
+     "state",
+     "country_code"
+    ],
+    "properties": {
+     "full": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "street": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "neighborhood": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The district Google files the place under: Manhattan."
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postal_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The state or region, where the address has one: New York."
+     },
+     "country_code": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2, upper case."
+     }
+    }
+   },
+   "location": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "latitude",
+     "longitude"
+    ],
+    "properties": {
+     "latitude": {
+      "type": "number",
+      "description": "Degrees, 7 decimals (about a centimetre)."
+     },
+     "longitude": {
+      "type": "number",
+      "description": "Degrees, 7 decimals."
+     }
+    }
+   },
+   "phone": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "pattern": "^\\+[0-9]{6,15}$",
+    "description": "E.164; null when Google gives no international number."
+   },
+   "website_url": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "uri"
+   },
+   "rating": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "value",
+     "scale",
+     "count",
+     "distribution"
+    ],
+    "description": "The average rating and how many reviews make it; null when the place has none.",
+    "properties": {
+     "value": {
+      "type": "number"
+     },
+     "scale": {
+      "const": 5,
+      "description": "The best possible value: ratings from other sites compare once divided by it."
+     },
+     "count": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "distribution": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+       "1",
+       "2",
+       "3",
+       "4",
+       "5"
+      ],
+      "description": "How many reviews give each number of stars, 1 to 5; they add up to count. Null when Google does not say.",
+      "properties": {
+       "1": {
+        "type": "integer"
+       },
+       "2": {
+        "type": "integer"
+       },
+       "3": {
+        "type": "integer"
+       },
+       "4": {
+        "type": "integer"
+       },
+       "5": {
+        "type": "integer"
+       }
+      }
+     }
+    }
+   },
+   "review_topics": {
+    "type": [
+     "array",
+     "null"
+    ],
+    "description": "The topics Google draws from the reviews (pleasant waiters), how many reviews mention each, and the id Google filters the reviews by; null when the answer has none (a list of results).",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "name",
+      "mentions",
+      "id"
+     ],
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "mentions": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      },
+      "id": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    }
+   },
+   "description": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "description": "Google's short summary of the place, when it has one."
+   },
+   "owner_description": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "description": "What the place says of itself on its profile, as its owner wrote it (From the owner); null when it says nothing."
+   },
+   "booking_url": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "uri"
+   },
+   "hours": {
+    "type": [
+     "array",
+     "null"
+    ],
+    "description": "The week, Monday first, in local time (`timezone`). A day closed has no interval; `intervals: null` is a day Google gives in a shape we cannot read (unknown, never closed); a close earlier than its open ends the next day; null when Google shows no hours.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "day",
+      "intervals"
+     ],
+     "properties": {
+      "day": {
+       "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+       ]
+      },
+      "intervals": {
+       "type": [
+        "array",
+        "null"
+       ],
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "open",
+         "close"
+        ],
+        "properties": {
+         "open": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}$",
+          "description": "HH:MM, local time."
+         },
+         "close": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}$",
+          "description": "HH:MM, local time; 24:00 is midnight."
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "more_hours": {
+    "type": "array",
+    "description": "Hours of a service apart from the place's own (Kitchen, Brunch, Takeout...), labelled in `language`.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "label",
+      "hours"
+     ],
+     "properties": {
+      "label": {
+       "type": "string"
+      },
+      "hours": {
+       "type": [
+        "array",
+        "null"
+       ],
+       "description": "The week, Monday first, in local time (`timezone`). A day closed has no interval; `intervals: null` is a day Google gives in a shape we cannot read (unknown, never closed); a close earlier than its open ends the next day; null when Google shows no hours.",
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "day",
+         "intervals"
+        ],
+        "properties": {
+         "day": {
+          "enum": [
+           "monday",
+           "tuesday",
+           "wednesday",
+           "thursday",
+           "friday",
+           "saturday",
+           "sunday"
+          ]
+         },
+         "intervals": {
+          "type": [
+           "array",
+           "null"
+          ],
+          "items": {
+           "type": "object",
+           "additionalProperties": false,
+           "required": [
+            "open",
+            "close"
+           ],
+           "properties": {
+            "open": {
+             "type": "string",
+             "pattern": "^\\d{2}:\\d{2}$",
+             "description": "HH:MM, local time."
+            },
+            "close": {
+             "type": "string",
+             "pattern": "^\\d{2}:\\d{2}$",
+             "description": "HH:MM, local time; 24:00 is midnight."
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "timezone": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "description": "IANA time zone."
+   },
+   "attributes": {
+    "type": "array",
+    "description": "What Google lists about the place in its results (accessibility...). `id` is Google's own, the same in every language; `value` is true when the place has it.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "label",
+      "group",
+      "value"
+     ],
+     "properties": {
+      "id": {
+       "type": "string",
+       "examples": [
+        "has_wheelchair_accessible_entrance"
+       ]
+      },
+      "label": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "group": {
+       "type": "string",
+       "examples": [
+        "accessibility"
+       ]
+      },
+      "value": {
+       "type": [
+        "boolean",
+        "null"
+       ],
+       "description": "true when Google shows the place has it; null for anything else it says."
+      }
+     }
+    }
+   },
+   "highlights": {
+    "type": "array",
+    "description": "Google's badges on the place: LGBTQ+ friendly, women-owned. `id` is the same in every language.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "label"
+     ],
+     "properties": {
+      "id": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "examples": [
+        "lgbtq_friendly"
+       ]
+      },
+      "label": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "actions": {
+    "type": "array",
+    "description": "What people can do from Google: reserve a table, order online. `url` is Google's own page for it; `providers` are the services it sends to (OpenTable, a delivery service, the place's site).",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "label",
+      "url",
+      "providers"
+     ],
+     "properties": {
+      "type": {
+       "enum": [
+        "reserve",
+        "order",
+        null
+       ],
+       "description": "null for a kind of action we do not name yet; `label` says it."
+      },
+      "label": {
+       "type": "string"
+      },
+      "url": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "format": "uri"
+      },
+      "providers": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "name",
+         "domain",
+         "url"
+        ],
+        "properties": {
+         "name": {
+          "type": "string"
+         },
+         "domain": {
+          "type": "string"
+         },
+         "url": {
+          "type": [
+           "string",
+           "null"
+          ],
+          "format": "uri"
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "owner": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "id",
+     "name"
+    ],
+    "description": "The Google account that manages the place's profile, as Google shows it.",
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     }
+    }
+   },
+   "popular_times": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "week",
+     "live"
+    ],
+    "description": "Google's \"Popular times\": for each day, how busy each hour usually is, 0 (empty) to 100 (busiest); and how busy it is now when Google says so (`live`, its label in `language`). null when Google shows none.",
+    "properties": {
+     "week": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "day",
+        "hours"
+       ],
+       "properties": {
+        "day": {
+         "enum": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+         ]
+        },
+        "hours": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+           "hour",
+           "busyness"
+          ],
+          "properties": {
+           "hour": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 23
+           },
+           "busyness": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+           }
+          }
+         }
+        }
+       }
+      }
+     },
+     "live": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+       "hour",
+       "busyness",
+       "label"
+      ],
+      "properties": {
+       "hour": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "busyness": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "label": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    }
+   },
+   "admission": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "price",
+     "url",
+     "domain",
+     "offers"
+    ],
+    "description": "What a visit costs, for a place one visits (a museum, a monument): the price Google shows, the official site, the sellers.",
+    "properties": {
+     "price": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+       "amount",
+       "currency",
+       "text"
+      ],
+      "description": "A price: `amount` and `currency` (ISO 4217) when they read, null otherwise (\"$\" names several currencies); `text` as Google wrote it.",
+      "properties": {
+       "amount": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "currency": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^[A-Z]{3}$"
+       },
+       "text": {
+        "type": "string"
+       }
+      }
+     },
+     "url": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "format": "uri"
+     },
+     "domain": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "offers": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "seller",
+        "url",
+        "price"
+       ],
+       "properties": {
+        "seller": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "url": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "format": "uri"
+        },
+        "price": {
+         "type": [
+          "object",
+          "null"
+         ],
+         "additionalProperties": false,
+         "required": [
+          "amount",
+          "currency",
+          "text"
+         ],
+         "description": "A price: `amount` and `currency` (ISO 4217) when they read, null otherwise (\"$\" names several currencies); `text` as Google wrote it.",
+         "properties": {
+          "amount": {
+           "type": [
+            "number",
+            "null"
+           ]
+          },
+          "currency": {
+           "type": [
+            "string",
+            "null"
+           ],
+           "pattern": "^[A-Z]{3}$"
+          },
+          "text": {
+           "type": "string"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "hotel": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "check_in",
+     "check_out",
+     "price",
+     "similar"
+    ],
+    "description": "For a hotel: the night Google prices, its price for that night, and the hotels Google compares it with.",
+    "properties": {
+     "check_in": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "format": "date"
+     },
+     "check_out": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "format": "date"
+     },
+     "price": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+       "amount",
+       "currency",
+       "text"
+      ],
+      "description": "A price: `amount` and `currency` (ISO 4217) when they read, null otherwise (\"$\" names several currencies); `text` as Google wrote it.",
+      "properties": {
+       "amount": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "currency": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^[A-Z]{3}$"
+       },
+       "text": {
+        "type": "string"
+       }
+      }
+     },
+     "similar": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "name",
+        "feature_id",
+        "price",
+        "rating",
+        "note"
+       ],
+       "properties": {
+        "name": {
+         "type": "string"
+        },
+        "feature_id": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "price": {
+         "type": [
+          "object",
+          "null"
+         ],
+         "additionalProperties": false,
+         "required": [
+          "amount",
+          "currency",
+          "text"
+         ],
+         "description": "A price: `amount` and `currency` (ISO 4217) when they read, null otherwise (\"$\" names several currencies); `text` as Google wrote it.",
+         "properties": {
+          "amount": {
+           "type": [
+            "number",
+            "null"
+           ]
+          },
+          "currency": {
+           "type": [
+            "string",
+            "null"
+           ],
+           "pattern": "^[A-Z]{3}$"
+          },
+          "text": {
+           "type": "string"
+          }
+         }
+        },
+        "rating": {
+         "type": [
+          "object",
+          "null"
+         ],
+         "additionalProperties": false,
+         "required": [
+          "value",
+          "scale",
+          "count"
+         ],
+         "properties": {
+          "value": {
+           "type": "number"
+          },
+          "scale": {
+           "const": 5
+          },
+          "count": {
+           "type": [
+            "integer",
+            "null"
+           ]
+          }
+         }
+        },
+        "note": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "What Google says the price includes: breakfast, parking."
+        }
+       }
+      }
+     }
+    }
+   },
+   "things_to_do": {
+    "type": "array",
+    "description": "The tours and activities Google offers at the place: title, seller, price, duration, rating.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "title",
+      "url",
+      "seller",
+      "price",
+      "duration",
+      "rating"
+     ],
+     "properties": {
+      "title": {
+       "type": "string"
+      },
+      "url": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "format": "uri"
+      },
+      "seller": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "price": {
+       "type": [
+        "object",
+        "null"
+       ],
+       "additionalProperties": false,
+       "required": [
+        "amount",
+        "currency",
+        "text"
+       ],
+       "description": "A price: `amount` and `currency` (ISO 4217) when they read, null otherwise (\"$\" names several currencies); `text` as Google wrote it.",
+       "properties": {
+        "amount": {
+         "type": [
+          "number",
+          "null"
+         ]
+        },
+        "currency": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "pattern": "^[A-Z]{3}$"
+        },
+        "text": {
+         "type": "string"
+        }
+       }
+      },
+      "duration": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "description": "As Google writes it, 7h."
+      },
+      "rating": {
+       "type": [
+        "object",
+        "null"
+       ],
+       "additionalProperties": false,
+       "required": [
+        "value",
+        "scale",
+        "count"
+       ],
+       "properties": {
+        "value": {
+         "type": "number"
+        },
+        "scale": {
+         "const": 5
+        },
+        "count": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        }
+       }
+      }
+     }
+    }
+   },
+   "ids": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "place_id",
+     "cid",
+     "feature_id",
+     "kgmid"
+    ],
+    "description": "Every id Google gives the place: the one another call or another tool may need.",
+    "properties": {
+     "place_id": {
+      "type": "string"
+     },
+     "cid": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Customer id: the second half of feature_id, in decimal; google.com/maps?cid=<cid> opens the place."
+     },
+     "feature_id": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Feature id (0x...:0x...), what reviews and photos are listed by."
+     },
+     "kgmid": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Knowledge Graph id (/g/...)."
+     }
+    }
+   },
+   "photo_url": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "uri",
+    "description": "The place's main photo."
+   },
+   "url": {
+    "type": "string",
+    "format": "uri",
+    "description": "The place on Google Maps (Maps URLs, query_place_id)."
+   },
+   "source_url": {
+    "type": "string",
+    "format": "uri",
+    "description": "The place's page these values were read from."
+   },
+   "observed_at": {
+    "type": "string",
+    "format": "date-time",
+    "description": "When they were read, UTC."
+   },
+   "photos": {
+    "type": "array",
+    "description": "The photos on the place's page, full size.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "url",
+      "width",
+      "height"
+     ],
+     "properties": {
+      "url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "width": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      },
+      "height": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      }
+     }
+    }
+   },
+   "related": {
+    "type": "array",
+    "description": "What Google shows as \"People also search for\", by group, each place by its feature id (read it with places/get).",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "label",
+      "feature_ids"
+     ],
+     "properties": {
+      "label": {
+       "type": "string"
+      },
+      "feature_ids": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   },
+   "inside": {
+    "type": "array",
+    "description": "The places inside this one: a shop in a museum, a stand in a market.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "name",
+      "feature_id",
+      "kgmid",
+      "location"
+     ],
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "feature_id": {
+       "type": "string"
+      },
+      "kgmid": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "location": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "latitude",
+        "longitude"
+       ],
+       "properties": {
+        "latitude": {
+         "type": [
+          "number",
+          "null"
+         ]
+        },
+        "longitude": {
+         "type": [
+          "number",
+          "null"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "price": {
+  "credits_per_call": 1,
+  "description": "1 credit a call. A place that is not found, an ambiguous name and a failed call are free.",
+  "free": [
+   "failed"
+  ]
+ },
+ "deadline": {
+  "default_s": 30,
+  "max_s": 60
+ },
+ "object": "operation",
+ "id": "google_maps/places/get",
+ "site": {
+  "title": "Google Maps",
+  "domain": "google.com/maps",
+  "color": "#3DBE7A"
+ }
+}

@@ -24,7 +24,7 @@ export LOBSTR_API_KEY="..."
 import { Lobstr } from 'lobstrio';
 
 const client = new Lobstr();
-const run = await client.run('google_maps/places/search', { query: 'bakeries in Lyon' }, { limit: 5 });
+const run = await client.run('google_maps/places/search', { query: 'bakeries in Austin, TX' }, { limit: 5 });
 
 run.results; // the records
 run.cost.credits; // what the call cost
@@ -44,7 +44,7 @@ charged twice.
 A call is one page. `nextPage()` sends `next` as it is, and answers `null` after the last page:
 
 ```ts
-let page = await client.run('google_maps/reviews/list', { place: 'ChIJc_459AHr9EcRd0ALc7vrjcI' });
+let page = await client.run('google_maps/reviews/list', { place: 'ChIJCar0f49ZwokR6ozLV-dHNTE' });
 while (page) {
   for (const review of page.results) console.log(review.rating);
   page = await page.nextPage();
@@ -54,7 +54,7 @@ while (page) {
 Or every record, page after page:
 
 ```ts
-for await (const review of client.iterate('google_maps/reviews/list', { place: 'ChIJc_459AHr9EcRd0ALc7vrjcI' }, { maxRecords: 100 })) {
+for await (const review of client.iterate('google_maps/reviews/list', { place: 'ChIJCar0f49ZwokR6ozLV-dHNTE' }, { maxRecords: 100 })) {
   console.log(review.text);
 }
 ```
@@ -66,7 +66,7 @@ Each page is a call, at the operation's price: stop with `maxRecords`, `maxPages
 One per operation, with its options' and its record's types, and their descriptions in your editor:
 
 ```ts
-const run = await client.googleMaps.places.search({ query: 'bakery', near: { lat: 45.76, lng: 4.84 } });
+const run = await client.googleMaps.places.search({ query: 'bakery', near: { lat: 30.27, lng: -97.74 } });
 run.results[0].phone; // string | null
 
 for await (const tweet of client.x.tweets.search.iterate({ query: 'nasa' }, { maxPages: 2 })) {
@@ -82,8 +82,8 @@ untyped. The types are generated from the [OpenAPI](https://api.lobstr.io/v2/ope
 ```ts
 const runs = await client.runMany(
   [
-    ['google_maps/places/search', { query: 'bakeries in Lyon' }],
-    ['google_maps/places/search', { query: 'bakeries in Lille' }, { limit: 5 }],
+    ['google_maps/places/search', { query: 'bakeries in Austin, TX' }],
+    ['google_maps/places/search', { query: 'bakeries in Dallas, TX' }, { limit: 5 }],
   ],
   { concurrency: 4 },
 );
@@ -128,7 +128,7 @@ await client.catalog.get('google_maps/places/search'); // its contract
 await client.catalog.status('google_maps/places/search'); // how its calls went, 90 days
 await client.balance(); // the credits left, and your plan
 
-await client.accounts.connect({ site: 'x', cookies: { auth_token: '...', ct0: '...' }, country: 'FR' });
+await client.accounts.connect({ site: 'x', cookies: { auth_token: '...', ct0: '...' }, country: 'US' });
 await client.accounts.list({ site: 'x' });
 await client.accounts.get('acc_...');
 await client.accounts.delete('acc_...');
@@ -147,9 +147,9 @@ request (180,000 by default; a run waits at least its `timeoutS` plus 30 seconds
 ## The CLI
 
 ```bash
-npx lobstr run google_maps/places/search query="bakeries in Lyon" --limit 5 --fields name,phone
-npx lobstr run google_maps/places/search query=bakery near.lat=45.76 near.lng=4.84
-npx lobstr run google_maps/reviews/list place=ChIJc_459AHr9EcRd0ALc7vrjcI --all --max-records 100 --jsonl
+npx lobstr run google_maps/places/search query="bakeries in Austin, TX" --limit 5 --fields name,phone
+npx lobstr run google_maps/places/search query=bakery near.lat=30.27 near.lng=-97.74
+npx lobstr run google_maps/reviews/list place=ChIJCar0f49ZwokR6ozLV-dHNTE --all --max-records 100 --jsonl
 npx lobstr catalog google maps
 npx lobstr operation google_maps/places/search
 npx lobstr balance
@@ -160,6 +160,46 @@ npx lobstr feedback "A field is missing" --operation google_maps/places/get
 Options are `key=value`: the value is read as JSON when it is valid JSON, else as a string; dotted keys nest. `--all`
 follows every page, up to `--max-records`. The output is pretty JSON on a terminal, JSON Lines with `--jsonl`. An
 error prints the API's message and its `doc_url` on stderr, with exit code 1.
+
+## Agent frameworks
+
+The tools of lobstr.io's [MCP server](https://github.com/lobstrio/lobstr-mcp) for the
+[Vercel AI SDK](https://ai-sdk.dev), version 7, from `lobstrio/ai-sdk`:
+
+```bash
+npm install lobstrio ai @ai-sdk/anthropic
+```
+
+```ts
+import { anthropic } from '@ai-sdk/anthropic';
+import { generateText, isStepCount } from 'ai';
+import { lobstrTools } from 'lobstrio/ai-sdk';
+
+const { text } = await generateText({
+  model: anthropic('claude-sonnet-5-5'),
+  tools: await lobstrTools(),
+  stopWhen: isStepCount(10),
+  prompt: 'What does the news say about Tesla today?',
+});
+```
+
+Three tools: `lobstr_find_operations` finds the operations that fit what the agent needs (the catalog, read once),
+`lobstr_get_operation` gives one's options and the fields of its records, `lobstr_run_operation` runs it, one page
+at its price, and answers `count`, `cost`, `has_more`, `next` (its own arguments for the following page) and
+`results`. `operations` adds a tool per operation, its input the operation's options:
+
+```ts
+import { Lobstr } from 'lobstrio';
+
+const client = new Lobstr({ apiKey: process.env.LOBSTR_API_KEY });
+const tools = await lobstrTools({ client, operations: ['google_maps/places/search'] });
+tools.google_maps_places_search; // its input: query, near, zoom..., fields, limit
+```
+
+Every tool answers compact JSON, and a failed call comes back to the model as text (the API's message and
+`doc_url`), never as a throw, the SDK's retries underneath. `ai` is an optional peer dependency: `lobstrio` itself
+never loads it. The same tools, with the same names and answers, are in the
+[Python SDK](https://github.com/lobstrio/lobstrio-python) for LangChain and CrewAI.
 
 ## Links
 

@@ -1,7 +1,7 @@
 /**
  * The `lobstr` command: lobstr.io's API v2 from a terminal.
  *
- *   lobstr run google_maps/places/search query="bakeries in Lyon" near.lat=45.76 --limit 5 --fields name,phone
+ *   lobstr run google_maps/places/search query="bakeries in Austin, TX" near.lat=30.27 --limit 5 --fields name,phone
  *
  * The same grammar as the Python SDK's `lobstr`. Output: pretty JSON on a terminal, compact JSON when piped,
  * JSON Lines with `--jsonl`. Errors: the API's message and its doc_url on stderr, exit code 1.
@@ -23,13 +23,13 @@ Usage:
   lobstr feedback "<message>" [--operation op] [--run id]
 
 Options are key=value: the value is read as JSON when it is valid JSON, else as a string; dotted keys nest
-(near.lat=45.76). --all follows every page (each page is a call, at the operation's price), up to --max-records.
+(near.lat=30.27). --all follows every page (each page is a call, at the operation's price), up to --max-records.
 The API key comes from LOBSTR_API_KEY (https://app.lobstr.io/dashboard/api); the catalog needs none.
 
 Examples:
   lobstr catalog google maps
-  lobstr run google_maps/places/search query="bakeries in Lyon" --limit 5 --fields name,phone
-  lobstr run google_maps/reviews/list place=ChIJc_459AHr9EcRd0ALc7vrjcI --all --max-records 100 --jsonl
+  lobstr run google_maps/places/search query="bakeries in Austin, TX" --limit 5 --fields name,phone
+  lobstr run google_maps/reviews/list place=ChIJCar0f49ZwokR6ozLV-dHNTE --all --max-records 100 --jsonl
 
 Docs: https://docs.lobstr.io · Catalog: https://api.lobstr.io/v2/catalog.md
 `;
@@ -99,7 +99,7 @@ export function parseValue(raw: string): unknown {
   }
 }
 
-/** `key=value` pairs to the options object; dotted keys nest (`near.lat=45.76` gives `{near: {lat: 45.76}}`). */
+/** `key=value` pairs to the options object; dotted keys nest (`near.lat=30.27` gives `{near: {lat: 30.27}}`). */
 export function parseOptions(pairs: string[]): Record<string, unknown> {
   const options: Record<string, unknown> = {};
   for (const pair of pairs) {

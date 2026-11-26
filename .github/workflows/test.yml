@@ -36,3 +36,10 @@ jobs:
           node -e "const { Lobstr } = require('lobstrio'); if (typeof new Lobstr('k').run !== 'function') process.exit(1)"
           node --input-type=module -e "import { Lobstr } from 'lobstrio'; if (typeof new Lobstr('k').googleMaps.places.search !== 'function') process.exit(1)"
           npx lobstr --version
+      - name: lobstrio/ai-sdk loads with ai installed beside it
+        run: |
+          cd "$RUNNER_TEMP/smoke"
+          npm install ai@7
+          node --input-type=module -e "import { lobstrTools } from 'lobstrio/ai-sdk'; const t = await lobstrTools({ client: new (await import('lobstrio')).Lobstr('k') }); if (typeof t.lobstr_run_operation.execute !== 'function') process.exit(1)"
+          # ai is ESM only: require() reaches it where Node can require an ES module (20.19+, 22.12+).
+          node -e "if (process.features.require_module) require('lobstrio/ai-sdk').lobstrTools().then((t) => { if (!t.lobstr_find_operations) process.exit(1) })"

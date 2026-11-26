@@ -1,0 +1,423 @@
+{
+ "operation": "articles/search",
+ "version": "2.0.1",
+ "status": "pilot",
+ "title": "Search articles",
+ "summary": "The articles of a Google News search, up to 100, as Google ranks them, each with its publisher's URL.",
+ "use_when": "You need the news articles Google News shows for a query: title, the publisher's URL, publication time, publisher, authors, image, and the story Google groups it in. One call is one search of at most 100 articles, ranked by relevance, with no next page: narrow it by time (`when`, or `after`/`before` for days) or by `site`, and call once per period for more. Google News gives no summary of an article's text.",
+ "categories": [
+  "News"
+ ],
+ "icon": "news_lens",
+ "source": "google_news",
+ "input": {
+  "type": "object",
+  "required": [
+   "query"
+  ],
+  "additionalProperties": false,
+  "properties": {
+   "query": {
+    "type": "string",
+    "minLength": 1,
+    "maxLength": 500,
+    "description": "The words to search, as typed in Google News' search box; its operators work (\"exact words\", OR, -word).",
+    "examples": [
+     "artificial intelligence",
+     "\"Jensen Huang\"",
+     "electric cars -Tesla"
+    ]
+   },
+   "edition": {
+    "type": "string",
+    "enum": [
+     "AU:en",
+     "BW:en",
+     "CA:en",
+     "ET:en",
+     "GH:en",
+     "IN:en",
+     "ID:en",
+     "IE:en",
+     "IL:en",
+     "KE:en",
+     "LV:en",
+     "MY:en",
+     "NA:en",
+     "NZ:en",
+     "NG:en",
+     "PK:en",
+     "PH:en",
+     "SG:en",
+     "ZA:en",
+     "TZ:en",
+     "UG:en",
+     "GB:en",
+     "US:en",
+     "ZW:en",
+     "ID:id",
+     "MY:ms",
+     "ES:ca",
+     "CZ:cs",
+     "DE:de",
+     "AT:de",
+     "CH:de",
+     "EE:et",
+     "AR:es-419",
+     "CL:es-419",
+     "CO:es-419",
+     "CU:es-419",
+     "ES:es",
+     "US:es-419",
+     "MX:es-419",
+     "PE:es-419",
+     "VE:es-419",
+     "BE:fr",
+     "CA:fr",
+     "FR:fr",
+     "MA:fr",
+     "SN:fr",
+     "CH:fr",
+     "IT:it",
+     "LV:lv",
+     "LT:lt",
+     "HU:hu",
+     "BE:nl",
+     "NL:nl",
+     "NO:no",
+     "PL:pl",
+     "BR:pt-419",
+     "PT:pt-150",
+     "RO:ro",
+     "SK:sk",
+     "SI:sl",
+     "FI:fi",
+     "SE:sv",
+     "VN:vi",
+     "TR:tr",
+     "GR:el",
+     "BG:bg",
+     "RU:ru",
+     "UA:ru",
+     "RS:sr",
+     "UA:uk",
+     "IL:he",
+     "AE:ar",
+     "SA:ar",
+     "LB:ar",
+     "EG:ar",
+     "IN:mr",
+     "IN:hi",
+     "BD:bn",
+     "IN:bn",
+     "IN:pa",
+     "IN:gu",
+     "IN:ta",
+     "IN:te",
+     "IN:ml",
+     "TH:th",
+     "CN:zh-Hans",
+     "TW:zh-Hant",
+     "HK:zh-Hant",
+     "JP:ja",
+     "KR:ko"
+    ],
+    "default": "US:en",
+    "description": "One of Google News' 90 editions, COUNTRY:language as Google writes it (its \"Language & region\" menu): US:en by default, GB:en, FR:fr, DE:de, IN:en, BR:pt-419... Google ranks and picks the articles for that edition's readers.",
+    "examples": [
+     "US:en",
+     "FR:fr",
+     "GB:en"
+    ]
+   },
+   "site": {
+    "type": "string",
+    "description": "Only the articles of this publisher's domain (lemonde.fr, reuters.com).",
+    "examples": [
+     "reuters.com"
+    ]
+   },
+   "when": {
+    "type": "string",
+    "enum": [
+     "1h",
+     "1d",
+     "7d"
+    ],
+    "description": "Only the articles of the last hour, day or week. Not with `after` or `before`."
+   },
+   "after": {
+    "type": "string",
+    "format": "date",
+    "description": "Only the articles published from this day (YYYY-MM-DD), which Google reads in US Pacific time. The articles of a search by day carry their day, not their hour (Google cuts their time to the day's midnight, Pacific)."
+   },
+   "before": {
+    "type": "string",
+    "format": "date",
+    "description": "Only the articles published before this day (YYYY-MM-DD, US Pacific time). With `after`, a span of days."
+   }
+  }
+ },
+ "pagination": {
+  "style": "none",
+  "page_size": 100
+ },
+ "record": {
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+   "object",
+   "id",
+   "position",
+   "title",
+   "url",
+   "amp_url",
+   "published_at",
+   "publisher",
+   "authors",
+   "image",
+   "story",
+   "ids",
+   "google_news_url",
+   "source_url",
+   "observed_at"
+  ],
+  "properties": {
+   "object": {
+    "const": "article"
+   },
+   "id": {
+    "type": "string",
+    "description": "The article's id: 16 characters, the same for its publisher's URL in every search and edition. Google's own id is ids.article_id."
+   },
+   "position": {
+    "type": "integer",
+    "minimum": 1,
+    "description": "Its place in Google's ranking; a story's articles in their story's place."
+   },
+   "title": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "description": "The title, as the publisher wrote it."
+   },
+   "url": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "uri",
+    "description": "The article at its publisher's (never Google's link)."
+   },
+   "amp_url": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "uri",
+    "description": "Its AMP page, when the publisher has one."
+   },
+   "published_at": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "date-time",
+    "description": "When it was published, UTC (a day's midnight, Pacific, in a search by `after`/`before`)."
+   },
+   "publisher": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "name",
+     "site",
+     "icon",
+     "id",
+     "google_news_url"
+    ],
+    "properties": {
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "site": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The publisher's site: https://www.lemonde.fr."
+     },
+     "icon": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Its icon, as Google News shows it."
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Google News' id of the publisher, the same on all its articles; null for some smaller ones."
+     },
+     "google_news_url": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "format": "uri",
+      "description": "The publisher's page on Google News."
+     }
+    }
+   },
+   "authors": {
+    "type": "array",
+    "description": "The authors Google News names (about half the articles), each with their Google News page when it has one.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "name",
+      "google_news_url"
+     ],
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "google_news_url": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "format": "uri"
+      }
+     }
+    }
+   },
+   "image": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "url",
+     "google_url",
+     "width",
+     "height"
+    ],
+    "properties": {
+     "url": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "The image at its publisher's."
+     },
+     "google_url": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Google's copy of it, as the page shows it."
+     },
+     "width": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "height": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    }
+   },
+   "story": {
+    "type": [
+     "object",
+     "null"
+    ],
+    "additionalProperties": false,
+    "required": [
+     "title",
+     "position"
+    ],
+    "description": "The story Google groups the article in (three articles under its heading, in plain searches only); null for an article alone.",
+    "properties": {
+     "title": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Google's heading of the story."
+     },
+     "position": {
+      "type": "integer",
+      "description": "The article's place in its story, 1 to 3."
+     }
+    }
+   },
+   "ids": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "article_id"
+    ],
+    "description": "Every id Google News gives with the article.",
+    "properties": {
+     "article_id": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Google News' id of the article (CBMi...), the one in its own links: about 250 characters."
+     }
+    }
+   },
+   "google_news_url": {
+    "type": [
+     "string",
+     "null"
+    ],
+    "format": "uri",
+    "description": "The article's link on Google News."
+   },
+   "source_url": {
+    "type": "string",
+    "format": "uri",
+    "description": "The search on news.google.com these values were read from."
+   },
+   "observed_at": {
+    "type": "string",
+    "format": "date-time",
+    "description": "When they were read, UTC."
+   }
+  }
+ },
+ "price": {
+  "credits_per_call": 1,
+  "description": "1 credit a call, whatever the search holds. An empty search and a failed call are free.",
+  "free": [
+   "empty",
+   "failed"
+  ]
+ },
+ "deadline": {
+  "default_s": 30,
+  "max_s": 60
+ },
+ "object": "operation",
+ "id": "google_news/articles/search",
+ "site": {
+  "title": "Google News",
+  "domain": "news.google.com",
+  "color": "#FFE600"
+ }
+}

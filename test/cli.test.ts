@@ -193,6 +193,6 @@ describe('the other commands', () => {
     expect(await h.run(['--help'])).toBe(0);
     expect(h.stdout()).toBe(USAGE);
     expect(await h.run(['--version'])).toBe(0);
-    expect(h.stdout().endsWith('1.0.0\n')).toBe(true);
+    expect(h.stdout().endsWith('1.1.0\n')).toBe(true);
   });
 });
