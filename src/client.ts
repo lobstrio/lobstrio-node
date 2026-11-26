@@ -219,7 +219,7 @@ export class Runs {
  *
  * ```ts
  * const client = new Lobstr(); // the key from LOBSTR_API_KEY
- * const run = await client.run('google_maps/places/search', { query: 'bakeries in Lyon' });
+ * const run = await client.run('google_maps/places/search', { query: 'bakeries in Austin, TX' });
  * ```
  */
 export class Lobstr {
@@ -259,7 +259,7 @@ export class Lobstr {
    * Runs one operation, `source/resource/verb`, with its options: one page of a list, or one item.
    *
    * ```ts
-   * const run = await client.run('google_maps/places/search', { query: 'bakeries in Lyon' }, { limit: 5 });
+   * const run = await client.run('google_maps/places/search', { query: 'bakeries in Austin, TX' }, { limit: 5 });
    * run.results; run.cost.credits; await run.nextPage();
    * ```
    */
@@ -329,8 +329,8 @@ export class Lobstr {
    *
    * ```ts
    * const [a, b] = await client.runMany([
-   *   ['google_maps/places/search', { query: 'bakeries in Lyon' }],
-   *   ['google_maps/places/search', { query: 'bakeries in Lille' }],
+   *   ['google_maps/places/search', { query: 'bakeries in Austin, TX' }],
+   *   ['google_maps/places/search', { query: 'bakeries in Dallas, TX' }],
    * ]);
    * ```
    */

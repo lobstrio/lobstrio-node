@@ -24,7 +24,7 @@ export LOBSTR_API_KEY="..."
 import { Lobstr } from 'lobstrio';
 
 const client = new Lobstr();
-const run = await client.run('google_maps/places/search', { query: 'bakeries in Lyon' }, { limit: 5 });
+const run = await client.run('google_maps/places/search', { query: 'bakeries in Austin, TX' }, { limit: 5 });
 
 run.results; // the records
 run.cost.credits; // what the call cost
@@ -44,7 +44,7 @@ charged twice.
 A call is one page. `nextPage()` sends `next` as it is, and answers `null` after the last page:
 
 ```ts
-let page = await client.run('google_maps/reviews/list', { place: 'ChIJc_459AHr9EcRd0ALc7vrjcI' });
+let page = await client.run('google_maps/reviews/list', { place: 'ChIJCar0f49ZwokR6ozLV-dHNTE' });
 while (page) {
   for (const review of page.results) console.log(review.rating);
   page = await page.nextPage();
@@ -54,7 +54,7 @@ while (page) {
 Or every record, page after page:
 
 ```ts
-for await (const review of client.iterate('google_maps/reviews/list', { place: 'ChIJc_459AHr9EcRd0ALc7vrjcI' }, { maxRecords: 100 })) {
+for await (const review of client.iterate('google_maps/reviews/list', { place: 'ChIJCar0f49ZwokR6ozLV-dHNTE' }, { maxRecords: 100 })) {
   console.log(review.text);
 }
 ```
@@ -66,7 +66,7 @@ Each page is a call, at the operation's price: stop with `maxRecords`, `maxPages
 One per operation, with its options' and its record's types, and their descriptions in your editor:
 
 ```ts
-const run = await client.googleMaps.places.search({ query: 'bakery', near: { lat: 45.76, lng: 4.84 } });
+const run = await client.googleMaps.places.search({ query: 'bakery', near: { lat: 30.27, lng: -97.74 } });
 run.results[0].phone; // string | null
 
 for await (const tweet of client.x.tweets.search.iterate({ query: 'nasa' }, { maxPages: 2 })) {
@@ -82,8 +82,8 @@ untyped. The types are generated from the [OpenAPI](https://api.lobstr.io/v2/ope
 ```ts
 const runs = await client.runMany(
   [
-    ['google_maps/places/search', { query: 'bakeries in Lyon' }],
-    ['google_maps/places/search', { query: 'bakeries in Lille' }, { limit: 5 }],
+    ['google_maps/places/search', { query: 'bakeries in Austin, TX' }],
+    ['google_maps/places/search', { query: 'bakeries in Dallas, TX' }, { limit: 5 }],
   ],
   { concurrency: 4 },
 );
@@ -128,7 +128,7 @@ await client.catalog.get('google_maps/places/search'); // its contract
 await client.catalog.status('google_maps/places/search'); // how its calls went, 90 days
 await client.balance(); // the credits left, and your plan
 
-await client.accounts.connect({ site: 'x', cookies: { auth_token: '...', ct0: '...' }, country: 'FR' });
+await client.accounts.connect({ site: 'x', cookies: { auth_token: '...', ct0: '...' }, country: 'US' });
 await client.accounts.list({ site: 'x' });
 await client.accounts.get('acc_...');
 await client.accounts.delete('acc_...');
@@ -147,9 +147,9 @@ request (180,000 by default; a run waits at least its `timeoutS` plus 30 seconds
 ## The CLI
 
 ```bash
-npx lobstr run google_maps/places/search query="bakeries in Lyon" --limit 5 --fields name,phone
-npx lobstr run google_maps/places/search query=bakery near.lat=45.76 near.lng=4.84
-npx lobstr run google_maps/reviews/list place=ChIJc_459AHr9EcRd0ALc7vrjcI --all --max-records 100 --jsonl
+npx lobstr run google_maps/places/search query="bakeries in Austin, TX" --limit 5 --fields name,phone
+npx lobstr run google_maps/places/search query=bakery near.lat=30.27 near.lng=-97.74
+npx lobstr run google_maps/reviews/list place=ChIJCar0f49ZwokR6ozLV-dHNTE --all --max-records 100 --jsonl
 npx lobstr catalog google maps
 npx lobstr operation google_maps/places/search
 npx lobstr balance
