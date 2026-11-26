@@ -1,5 +1,10 @@
 # lobstrio
 
+[![npm](https://img.shields.io/npm/v/lobstrio?color=blue)](https://www.npmjs.com/package/lobstrio)
+[![Downloads](https://img.shields.io/npm/dm/lobstrio)](https://www.npmjs.com/package/lobstrio)
+[![Tests](https://github.com/lobstrio/lobstrio-node/actions/workflows/test.yml/badge.svg)](https://github.com/lobstrio/lobstrio-node/actions/workflows/test.yml)
+[![License](https://img.shields.io/github/license/lobstrio/lobstrio-node)](LICENSE)
+
 The official Node.js SDK for [lobstr.io](https://www.lobstr.io?utm_source=lobstrio-node&utm_medium=readme)'s API v2: structured data from websites, one call per
 page. The types of every operation's options and records, a `lobstr` command, no runtime dependencies.
 
