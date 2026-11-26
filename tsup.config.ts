@@ -15,7 +15,7 @@ export default defineConfig([
   },
   {
     // The `lobstr` command: ESM only, its shebang kept.
-    entry: { cli: 'src/cli.ts' },
+    entry: { cli: 'src/bin.ts' },
     format: ['esm'],
     dts: false,
     target: 'node18',

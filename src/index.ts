@@ -17,4 +17,3 @@ export type * from './types.js';
 export type * from './generated.js';
 export { OPERATIONS } from './generated.js';
 export { VERSION } from './version.js';
-export { Lobstr as default } from './client.js';
