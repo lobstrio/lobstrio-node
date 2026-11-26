@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write # the GitHub release
-  id-token: write # npm provenance
+  id-token: write # npm trusted publishing and provenance
 
 jobs:
   release:
@@ -29,10 +29,11 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      # Trusted publishing (npm, since 26/11/2026): GitHub's OIDC token, no npm token; it needs npm 11.5.1 or later,
+      # and gives the provenance by itself.
+      - run: npm install -g npm@^11.5.1
       - name: Publish to npm, with provenance
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: GitHub release, its notes from CHANGELOG.md
         env:
           GH_TOKEN: ${{ github.token }}
