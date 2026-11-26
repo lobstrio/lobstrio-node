@@ -1,0 +1,67 @@
+{
+  "name": "lobstrio",
+  "version": "1.0.0",
+  "description": "The official Node.js SDK and CLI for lobstr.io's API v2: structured data from websites, one call per page.",
+  "keywords": [
+    "lobstr",
+    "lobstr.io",
+    "scraping",
+    "web data",
+    "api",
+    "sdk",
+    "google maps",
+    "leboncoin"
+  ],
+  "homepage": "https://docs.lobstr.io",
+  "bugs": {
+    "url": "https://github.com/lobstrio/lobstrio-node/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lobstrio/lobstrio-node.git"
+  },
+  "license": "Apache-2.0",
+  "author": "LOBSTR SAS",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "lobstr": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "generate": "node scripts/generate.mjs",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:live": "vitest run test/live.test.ts",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "tsup": "^8.5.1",
+    "typescript": "~5.9.3",
+    "vite": "^6.4.6",
+    "vitest": "^3.2.7"
+  }
+}
