@@ -60,7 +60,7 @@ export interface RunLog {
   object: 'run';
   id: string;
   created_at: string;
-  via: 'api' | 'mcp' | 'app';
+  via: 'api' | 'mcp' | 'app' | 'sdk';
   source: string;
   operation: string;
   version?: string | null;
