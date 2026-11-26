@@ -1,6 +1,6 @@
 # lobstrio
 
-The official Node.js SDK for [lobstr.io](https://www.lobstr.io)'s API v2: structured data from websites, one call per
+The official Node.js SDK for [lobstr.io](https://www.lobstr.io?utm_source=lobstrio-node&utm_medium=readme)'s API v2: structured data from websites, one call per
 page. The types of every operation's options and records, a `lobstr` command, no runtime dependencies.
 
 ```bash
@@ -34,7 +34,7 @@ run.next; // the whole call for the next page, or null
 
 An operation is `source/resource/verb`, as the [catalog](https://api.lobstr.io/v2/catalog.md) names it, with its
 options. The third argument takes `fields`, `limit`, `timeoutS` and `idempotencyKey`. The envelope's fields keep the
-API's names (`has_more`, `request_id`...): [Run an operation](https://docs.lobstr.io/run).
+API's names (`has_more`, `request_id`...): [Run an operation](https://docs.lobstr.io/run?utm_source=lobstrio-node&utm_medium=readme).
 
 Every call sends an `Idempotency-Key` (a UUID unless you give one), kept across the SDK's retries: a retry is never
 charged twice.
@@ -118,7 +118,7 @@ try {
 All are `LobstrError`s, with `status`, `type`, `code`, `message`, `param`, `docUrl`, `requestId`, `retryable` and
 `retryAfter`. The SDK retries up to `maxRetries` times (2) what can work later (the error's `retryable`, a `429` with
 `retry_after`, `409 idempotency_in_flight`, a 5xx, a lost connection), waiting `retry_after` when the API gives it.
-A failed call costs nothing: [Errors](https://docs.lobstr.io/errors).
+A failed call costs nothing: [Errors](https://docs.lobstr.io/errors?utm_source=lobstrio-node&utm_medium=readme).
 
 ## Everything else
 
@@ -203,7 +203,7 @@ never loads it. The same tools, with the same names and answers, are in the
 
 ## Links
 
-- Docs: https://docs.lobstr.io
+- Docs: https://docs.lobstr.io?utm_source=lobstrio-node&utm_medium=readme
 - Catalog: https://api.lobstr.io/v2/catalog.md
 - MCP server: https://github.com/lobstrio/lobstr-mcp
 
