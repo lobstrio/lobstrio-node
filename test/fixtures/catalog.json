@@ -1,0 +1,192 @@
+{
+ "object": "list",
+ "data": [
+  {
+   "object": "operation",
+   "id": "google_maps/places/get",
+   "source": "google_maps",
+   "operation": "places/get",
+   "site": {
+    "title": "Google Maps",
+    "domain": "google.com/maps",
+    "color": "#3DBE7A"
+   },
+   "title": "Get a place",
+   "summary": "One place's page on Google Maps, by its id, its link or its name, with everything places/search gives and its photos.",
+   "use_when": "You want one place, given as `place`: an id (a search's `id`, a cid, a feature id), the link of its Google Maps page, or a name with its city (\"Le Vieux Lyon, Lyon\"). It costs 1 credit where a search costs 20: the cheap way from a name to a place id, before google_maps/reviews/list. A name that matches several places answers `ambiguous_query` with them.",
+   "categories": [
+    "Lead generation"
+   ],
+   "icon": "store",
+   "version": "2.0.1",
+   "status": "pilot",
+   "price": {
+    "credits_per_call": 1,
+    "description": "1 credit a call. A place that is not found, an ambiguous name and a failed call are free.",
+    "free": [
+     "failed"
+    ]
+   }
+  },
+  {
+   "object": "operation",
+   "id": "google_maps/places/search",
+   "source": "google_maps",
+   "operation": "places/search",
+   "site": {
+    "title": "Google Maps",
+    "domain": "google.com/maps",
+    "color": "#3DBE7A"
+   },
+   "title": "Search places",
+   "summary": "One page of places for a Google Maps search, 20 at most, as the results list shows them.",
+   "use_when": "You need the places Google Maps lists for a search such as \"dentist\" near a point or \"restaurants in Lyon\": name, categories, address, coordinates, phone, website, rating, opening hours. For one place's full profile, use google_maps/places/get; for its reviews, google_maps/reviews/list.",
+   "categories": [
+    "Lead generation"
+   ],
+   "icon": "lens",
+   "version": "1.3.0",
+   "status": "pilot",
+   "price": {
+    "credits_per_call": 20,
+    "description": "20 credits a call, whatever the page holds: a short last page costs a whole call. An empty page (past the end, or no results) and a failed call are free.",
+    "free": [
+     "empty",
+     "failed"
+    ]
+   }
+  },
+  {
+   "object": "operation",
+   "id": "google_maps/reviews/list",
+   "source": "google_maps",
+   "operation": "reviews/list",
+   "site": {
+    "title": "Google Maps",
+    "domain": "google.com/maps",
+    "color": "#3DBE7A"
+   },
+   "title": "List reviews",
+   "summary": "One page of a Google Maps place's reviews, 20 at most, with their rating, text, author, photos and owner reply.",
+   "use_when": "You have a place, a restaurant, a hotel or a shop (its `id` from google_maps/places/search, or its cid or feature id), and need what people wrote about it: rating, full text and its translation, date, visit, author, photos, reactions, the owner's reply, and the ratings by aspect (food, service...) when the reviewer gave them. Follow `next` for the following page, as far as you need.",
+   "categories": [
+    "Reviews"
+   ],
+   "icon": "review",
+   "version": "1.2.2",
+   "status": "pilot",
+   "price": {
+    "credits_per_call": 4,
+    "description": "4 credits a call, whatever the page holds: a short last page costs a whole call. An empty page (a place without reviews, or an unknown place) and a failed call are free.",
+    "free": [
+     "empty",
+     "failed"
+    ]
+   }
+  },
+  {
+   "object": "operation",
+   "id": "google_news/articles/search",
+   "source": "google_news",
+   "operation": "articles/search",
+   "site": {
+    "title": "Google News",
+    "domain": "news.google.com",
+    "color": "#FFE600"
+   },
+   "title": "Search articles",
+   "summary": "The articles of a Google News search, up to 100, as Google ranks them, each with its publisher's URL.",
+   "use_when": "You need the news articles Google News shows for a query: title, the publisher's URL, publication time, publisher, authors, image, and the story Google groups it in. One call is one search of at most 100 articles, ranked by relevance, with no next page: narrow it by time (`when`, or `after`/`before` for days) or by `site`, and call once per period for more. Google News gives no summary of an article's text.",
+   "categories": [
+    "News"
+   ],
+   "icon": "news_lens",
+   "version": "2.0.1",
+   "status": "pilot",
+   "price": {
+    "credits_per_call": 1,
+    "description": "1 credit a call, whatever the search holds. An empty search and a failed call are free.",
+    "free": [
+     "empty",
+     "failed"
+    ]
+   }
+  },
+  {
+   "object": "operation",
+   "id": "realtor/listings/search",
+   "source": "realtor",
+   "operation": "listings/search",
+   "site": {
+    "title": "Realtor.com",
+    "domain": "realtor.com",
+    "color": "#D92228"
+   },
+   "title": "Search listings",
+   "summary": "One page of a realtor.com search, 42 homes for sale or sold, as the page shows them, with the MLS's wishes on AI use.",
+   "use_when": "You need the homes of a realtor.com search (United States): price, beds, baths, surfaces, address and coordinates, status (for sale, pending, sold, a plan to build), listing date, photos, tours, open house, the brokerage or the builder, the contact line, and the listing's MLS and ids. Set the search up on realtor.com (place, filters, sort), then pass its URL; `next` gives the following page. A listing's MLS may ask that it not be given to AI: every listing comes with that wish in `ai_distribution_suppressed`, and honouring it is the caller's responsibility.",
+   "categories": [
+    "Real estate"
+   ],
+   "icon": "lens",
+   "version": "1.2.0",
+   "status": "pilot",
+   "price": {
+    "credits_per_call": 21,
+    "description": "21 credits a call, whatever the page holds: a short last page costs a whole call. An empty page and a failed call are free.",
+    "free": [
+     "empty",
+     "failed"
+    ]
+   }
+  },
+  {
+   "object": "operation",
+   "id": "x/tweets/search",
+   "source": "x",
+   "operation": "tweets/search",
+   "site": {
+    "title": "X (Twitter)",
+    "domain": "x.com",
+    "color": "#C9D3DE"
+   },
+   "title": "Search tweets",
+   "summary": "The tweets of a search on X (Twitter), 20 a page, with their text, counts, media and author, read with your connected X account.",
+   "use_when": "You want tweets about a subject, from an account, in a language or between two dates: pass the search as you would type it in X's search box, operators included (from:nasa since:2026-11-01 lang:en min_faves:100). `tab` is the page's own: top (X's selection, the default) or latest (newest first). Follow `next` unchanged for more. It needs one of your X accounts connected (POST /v2/accounts), and X counts each account's searches: about 50 for 15 minutes. An empty page is not the end of a search, keep following `next` until it is null (empty pages are free). X never says a list is over (it gives a cursor on every page): `next` is null when X gives none, or after three empty pages in a row, a rule of this API.",
+   "categories": [
+    "Social media"
+   ],
+   "icon": "lens",
+   "version": "1.8.0",
+   "status": "pilot",
+   "price": {
+    "credits_per_call": 20,
+    "description": "20 credits per call that returns tweets, a short last page included. An empty answer, a failed call and a busy account are free.",
+    "free": [
+     "empty",
+     "failed",
+     "account_rate_limited"
+    ]
+   },
+   "requires": {
+    "account": "x"
+   },
+   "limits": {
+    "per_account": {
+     "calls": 1,
+     "per_s": 2,
+     "jitter_s": [
+      0,
+      2
+     ]
+    },
+    "when_busy": {
+     "error": "account_rate_limited",
+     "retry_after": true
+    }
+   }
+  }
+ ],
+ "has_more": false,
+ "next_cursor": null
+}

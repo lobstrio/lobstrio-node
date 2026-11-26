@@ -161,6 +161,46 @@ Options are `key=value`: the value is read as JSON when it is valid JSON, else a
 follows every page, up to `--max-records`. The output is pretty JSON on a terminal, JSON Lines with `--jsonl`. An
 error prints the API's message and its `doc_url` on stderr, with exit code 1.
 
+## Agent frameworks
+
+The tools of lobstr.io's [MCP server](https://github.com/lobstrio/lobstr-mcp) for the
+[Vercel AI SDK](https://ai-sdk.dev), version 7, from `lobstrio/ai-sdk`:
+
+```bash
+npm install lobstrio ai @ai-sdk/anthropic
+```
+
+```ts
+import { anthropic } from '@ai-sdk/anthropic';
+import { generateText, isStepCount } from 'ai';
+import { lobstrTools } from 'lobstrio/ai-sdk';
+
+const { text } = await generateText({
+  model: anthropic('claude-sonnet-5-5'),
+  tools: await lobstrTools(),
+  stopWhen: isStepCount(10),
+  prompt: 'What does the news say about Tesla today?',
+});
+```
+
+Three tools: `lobstr_find_operations` finds the operations that fit what the agent needs (the catalog, read once),
+`lobstr_get_operation` gives one's options and the fields of its records, `lobstr_run_operation` runs it, one page
+at its price, and answers `count`, `cost`, `has_more`, `next` (its own arguments for the following page) and
+`results`. `operations` adds a tool per operation, its input the operation's options:
+
+```ts
+import { Lobstr } from 'lobstrio';
+
+const client = new Lobstr({ apiKey: process.env.LOBSTR_API_KEY });
+const tools = await lobstrTools({ client, operations: ['google_maps/places/search'] });
+tools.google_maps_places_search; // its input: query, near, zoom..., fields, limit
+```
+
+Every tool answers compact JSON, and a failed call comes back to the model as text (the API's message and
+`doc_url`), never as a throw, the SDK's retries underneath. `ai` is an optional peer dependency: `lobstrio` itself
+never loads it. The same tools, with the same names and answers, are in the
+[Python SDK](https://github.com/lobstrio/lobstrio-python) for LangChain and CrewAI.
+
 ## Links
 
 - Docs: https://docs.lobstr.io

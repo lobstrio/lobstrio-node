@@ -1,7 +1,7 @@
 {
   "name": "lobstrio",
-  "version": "1.0.0",
-  "description": "The official Node.js SDK and CLI for lobstr.io's API v2: structured data from websites, one call per page.",
+  "version": "1.1.0",
+  "description": "The official Node.js SDK and CLI for lobstr.io's API v2: structured data from websites, one call per page. With tools for the Vercel AI SDK.",
   "keywords": [
     "lobstr",
     "lobstr.io",
@@ -10,7 +10,10 @@
     "api",
     "sdk",
     "google maps",
-    "leboncoin"
+    "leboncoin",
+    "ai sdk",
+    "agents",
+    "tools"
   ],
   "homepage": "https://docs.lobstr.io",
   "bugs": {
@@ -37,6 +40,16 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./ai-sdk": {
+      "import": {
+        "types": "./dist/ai-sdk.d.ts",
+        "default": "./dist/ai-sdk.js"
+      },
+      "require": {
+        "types": "./dist/ai-sdk.d.cts",
+        "default": "./dist/ai-sdk.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "bin": {
@@ -49,6 +62,14 @@
   "engines": {
     "node": ">=18"
   },
+  "peerDependencies": {
+    "ai": "^7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    }
+  },
   "scripts": {
     "build": "tsup",
     "generate": "node scripts/generate.mjs",
@@ -59,6 +80,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.19.130",
+    "ai": "^7.0.183",
     "tsup": "^8.5.1",
     "typescript": "~5.9.3",
     "vite": "^6.4.6",

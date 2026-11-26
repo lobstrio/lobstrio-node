@@ -50,7 +50,7 @@ describe('run', () => {
     expect(call.headers.authorization).toBe('Bearer test_key');
     expect(call.headers['content-type']).toBe('application/json');
     expect(call.headers['idempotency-key']).toMatch(UUID);
-    expect(call.headers['user-agent']).toMatch(/^lobstrio-node\/1\.0\.0 \(node\/\d+/);
+    expect(call.headers['user-agent']).toMatch(/^lobstrio-node\/1\.1\.0 \(node\/\d+/);
     expect(run).toBeInstanceOf(Run);
     expect(run.id).toBe(body.id);
     expect(run.count).toBe(2);

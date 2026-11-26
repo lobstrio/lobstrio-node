@@ -15,7 +15,10 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "lobstrio": ["./src/index.ts"]
+    }
   },
   "include": ["src", "test", "tsup.config.ts", "vitest.config.ts"]
 }
