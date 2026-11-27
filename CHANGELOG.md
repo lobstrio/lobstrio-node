@@ -3,6 +3,12 @@
 All notable changes to `lobstrio`, the Node.js SDK for lobstr.io's API v2, are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
+## 1.2.0 (2026-11-27)
+
+### Added
+
+- `yelp/reviews/list`: its typed method, options and record.
+
 ## 1.1.0 (2026-11-26)
 
 ### Added
